@@ -24,10 +24,10 @@ const db = mysql.createConnection({
 
 db.connect(err => {
   if (err) {
-    console.error("❌ MySQL Connection Failed:", err.message);
-    console.log("Make sure MySQL is running and nitw_portal database exists.");
-    process.exit(1);
-  }
+  console.error("❌ MySQL Connection Failed:", err.message);
+  console.log("Continuing without crashing...");
+  return;
+}
   console.log("✅ MySQL Connected to nitw_portal");
   createTables();
 });
@@ -141,7 +141,7 @@ app.get("/admin/logins", (req, res) => {
 });
 
 // ── START ──
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`\n🚀 NITW Portal running at http://localhost:${PORT}`);
   console.log(`   Open http://localhost:${PORT}/index.html in browser\n`);
