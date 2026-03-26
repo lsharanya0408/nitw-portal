@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NITW Smart Campus Portal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="particles" id="particles"></div>
+
+<!-- ===== AUTH ===== -->
+<div class="auth-wrapper" id="auth">
+  <div class="auth-card">
+    
+    <div class="logo-area">
+      <div class="logo-ring"><span class="logo-icon">🎓</span></div>
+      <h1 class="brand">NITW<span class="accent">Portal</span></h1>
+      <p class="tagline">Smart Campus System · NIT Warangal</p>
+    </div>
+    <div class="tab-toggle">
+      <button class="tab-btn active" id="loginTab" onclick="switchTab('login')">Login</button>
+      <button class="tab-btn" id="registerTab" onclick="switchTab('register')">Register</button>
+    </div>
+    <div class="form-group">
+      <label>NITW Email</label>
+      <input id="email" type="email" placeholder="rollno@student.nitw.ac.in" autocomplete="off"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="pw-wrap">
+        <input id="password" type="password" placeholder="Enter password"/>
+        <span class="eye" onclick="togglePw()">👁</span>
+      </div>
+    </div>
+    <button class="btn-primary" id="authBtn" onclick="doAuth()">
+      <span id="authBtnText">Login</span><span class="btn-glow"></span>
+    </button>
+    <p class="auth-msg" id="msg"></p>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="dashboard" class="hidden">
+
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon-sm">🎓</span>
+      <span class="brand-sm">NITW</span>
+    </div>
+    <div class="nav-items">
+      <a class="nav-item active" onclick="showSection('home')"       data-tip="Home">🏠</a>
+      <a class="nav-item"        onclick="showSection('attendance')" data-tip="Attendance">📊</a>
+      <a class="nav-item"        onclick="showSection('bunk')"       data-tip="Bunk Calc">😴</a>
+      <a class="nav-item"        onclick="showSection('gpa')"        data-tip="CGPA Calc">🎯</a>
+      <a class="nav-item"        onclick="showSection('countdown')"  data-tip="Exam Timer">⏱</a>
+      <a class="nav-item"        onclick="showSection('campus')"     data-tip="Campus Info">🏛</a>
+    </div>
+    <a class="nav-item logout" onclick="logout()" data-tip="Logout">🚪</a>
+  </nav>
+
+  <main class="main-content">
+
+
+<header class="topbar">
+  <div class="title-wrap">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLCbYRSgWzKGs0D7vL09YdjHK5xkQBo0589Q&s" class="topbar-logo">
+    <div>
+      <h1 class="page-title" id="pageTitle">NATIONAL INSTITUTE OF TECHNOLOGY -WARANGAL</h1>
+      <p class="welcome-text">
+        Welcome, <span id="userDisplay"></span>
+      </p>
+    </div>
+  </div>
+  <div class="live-time" id="liveTime"></div>
+</header>
+
+   
+
+
+
+    <!-- HOME -->
+    <section id="home" class="section active">
+      <div class="stats-grid">
+        <div class="stat-card" style="--clr:#f59e0b">
+          <div class="stat-icon">📊</div>
+          <div class="stat-val" id="statAtt">—</div>
+          <div class="stat-label">Avg Attendance %</div>
+        </div>
+        <div class="stat-card" style="--clr:#10b981">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-val" id="statGPA">—</div>
+          <div class="stat-label">Overall CGPA</div>
+        </div>
+        <div class="stat-card" style="--clr:#6366f1">
+          <div class="stat-icon">⏱</div>
+          <div class="stat-val" id="statDays">—</div>
+          <div class="stat-label">Days to Exam</div>
+        </div>
+        <div class="stat-card" style="--clr:#ef4444">
+          <div class="stat-icon">😴</div>
+          <div class="stat-val" id="statBunk">—</div>
+          <div class="stat-label">Safe Bunks Left</div>
+        </div>
+      </div>
+      <div class="info-banner">🔔 Maintain ≥75% attendance in ALL subjects to be eligible for exams</div>
+    </section>
+
+    <!-- ATTENDANCE — 6 Courses -->
+    <section id="attendance" class="section hidden">
+      <div class="card" style="max-width:900px">
+        <h3 class="card-title">📊 Attendance Tracker — 6 Courses</h3>
+        <p class="sub">Enter attended and total classes for each subject</p>
+        <div class="att-header-row">
+          <span>#</span><span>Subject Name</span><span>Attended</span><span>Total</span><span>Status</span>
+        </div>
+        <div id="attRows"></div>
+        <button class="btn-primary" style="margin-top:18px" onclick="saveAttendance()">
+          Analyse All Subjects <span class="btn-glow"></span>
+        </button>
+        <div id="attResult" class="result-box hidden"></div>
+        <div class="chart-wrap hidden" id="chartWrap">
+          <canvas id="myChart" height="260"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUNK CALCULATOR — 6 Courses -->
+    <section id="bunk" class="section hidden">
+      <div class="card" style="max-width:900px">
+        <h3 class="card-title">😴 Bunk Calculator — 6 Courses</h3>
+        <p class="sub">How many classes can you safely skip in each subject?</p>
+        <div class="att-header-row" style="grid-template-columns:30px 2fr 1fr 1fr 1fr 1fr">
+          <span>#</span><span>Subject</span><span>Attended</span><span>Total</span><span>Remaining</span><span>Can Bunk</span>
+        </div>
+        <div id="bunkRows"></div>
+        <button class="btn-primary" style="margin-top:18px" onclick="calcBunk()">
+          Calculate Bunks <span class="btn-glow"></span>
+        </button>
+        <div id="bunkResult" class="result-box hidden"></div>
+      </div>
+    </section>
+
+    <!-- CGPA CALCULATOR — 8 Semesters -->
+    <section id="gpa" class="section hidden">
+      <div class="card" style="max-width:980px">
+        <h3 class="card-title">🎯 CGPA Calculator — 8 Semesters</h3>
+        <p class="sub">
+          SGPA = Σ(Credits × Grade) ÷ Sem Credits &nbsp;·&nbsp;
+          Year CGPA = Σ(Sem Credits × SGPA) ÷ Year Credits &nbsp;·&nbsp;
+          Overall = Σ All / Grand Total
+        </p>
+        <div class="year-tabs" id="yearTabs">
+          <button class="year-tab active" onclick="switchYear(1)">Year 1</button>
+          <button class="year-tab"        onclick="switchYear(2)">Year 2</button>
+          <button class="year-tab"        onclick="switchYear(3)">Year 3</button>
+          <button class="year-tab"        onclick="switchYear(4)">Year 4</button>
+        </div>
+        <div id="semPanels"></div>
+        <button class="btn-primary" style="margin-top:20px" onclick="calcCGPA()">
+          Calculate Overall CGPA <span class="btn-glow"></span>
+        </button>
+        <div id="gpaResult" class="result-box hidden"></div>
+      </div>
+    </section>
+
+    <!-- EXAM COUNTDOWN -->
+    <section id="countdown" class="section hidden">
+      <div class="card">
+        <h3 class="card-title">⏱ Exam Countdown Timer</h3>
+        <div class="form-group">
+          <label>Exam Date</label>
+          <input id="examDate" type="date"/>
+        </div>
+        <div class="form-group">
+          <label>Exam Name</label>
+          <input id="examName" placeholder="e.g. Midsem — Data Structures"/>
+        </div>
+        <button class="btn-primary" onclick="startCountdown()">
+          Start Timer <span class="btn-glow"></span>
+        </button>
+        <div class="countdown-display" id="countdownDisplay"></div>
+      </div>
+    </section>
+
+    <!-- CAMPUS INFO -->
+    <section id="campus" class="section hidden">
+      <div class="campus-grid">
+        <div class="campus-card"><div class="campus-icon">🏛</div><h4>About NITW</h4><p>National Institute of Technology Warangal — established 1959, one of India's premier technical institutes (NIRF Top 20).</p></div>
+        <div class="campus-card"><div class="campus-icon">📚</div><h4>Departments</h4><p>CSE, ECE, EEE, ME, CE, CH, MME, Physics, Chemistry, Maths, Management, and more.</p></div>
+        <div class="campus-card"><div class="campus-icon">🏟</div><h4>Facilities</h4><p>Central Library, Sports Complex, Swimming Pool, Gyms, Medical Centre, Hostels (14+).</p></div>
+        <div class="campus-card"><div class="campus-icon">💼</div><h4>Placements</h4><p>Top recruiters: Google, Microsoft, Amazon, Flipkart, ISRO. Avg CTC ~12 LPA. 90%+ placement rate.</p></div>
+        <div class="campus-card"><div class="campus-icon">🎉</div><h4>Events</h4><p>Technozion (Tech Fest), Engineer (Cultural Fest), Spree (Sports), hackathons & workshops.</p></div>
+        <div class="campus-card"><div class="campus-icon">📞</div><h4>Quick Contacts</h4><p>Academic Office: 0870-2462000<br/>Medical: 0870-2462199<br/>Website: nitw.ac.in</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
