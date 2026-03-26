@@ -66,12 +66,23 @@ async function doAuth() {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({email, password})
     });
-    const text = await res.text();
+    const text = (await res.text()).trim();
+    console.log("Server response:", text);
 
-    if (text==="Success")    { userEmail=email; launchDashboard(email); }
-    else if (text==="Registered") { showMsg("Registered! Please login.", true); switchTab("login"); }
-    else if (text==="User exists") { showMsg("Already registered. Please login.", false); }
-    else { showMsg("Invalid email or password", false); }
+    if (text === "Success") {
+  userEmail = email;
+  launchDashboard(email);
+
+} else if (text === "Registered") {
+  showMsg("Registered! Please login.", true);
+  switchTab("login");
+
+} else if (text === "User exists") {
+  showMsg("Already registered. Please login.", false);
+
+} else {
+  showMsg(text || "Server error", false);
+}
   } catch {
     showMsg("⚠ Server not reachable. Run: node server.js", false);
   }
