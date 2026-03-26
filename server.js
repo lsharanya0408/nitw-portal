@@ -13,6 +13,10 @@ app.use(cors());
 // ── Serve frontend files from same folder ──
 app.use(express.static(path.join(__dirname)));
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
 // ── MySQL connection ──
 const db = mysql.createConnection({
   host: process.env.MYSQLHOST,
@@ -142,7 +146,6 @@ app.get("/admin/logins", (req, res) => {
 
 // ── START ──
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n🚀 NITW Portal running at http://localhost:${PORT}`);
-  console.log(`   Open http://localhost:${PORT}/index.html in browser\n`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
