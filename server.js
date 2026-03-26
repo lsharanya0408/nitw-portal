@@ -15,10 +15,11 @@ app.use(express.static(path.join(__dirname)));
 
 // ── MySQL connection ──
 const db = mysql.createConnection({
-  host:     "localhost",
-  user:     "root",
-  password: "Nani@5590",   // ← change this
-  database: "nitw_portal"
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT
 });
 
 db.connect(err => {
