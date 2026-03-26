@@ -28,6 +28,14 @@ const db = mysql.createConnection({
 
 db.connect(err => {
   if (err) {
+    console.error("❌ DB ERROR:", err);
+  } else {
+    console.log("✅ DB CONNECTED");
+  }
+});
+
+db.connect(err => {
+  if (err) {
   console.error("❌ MySQL Connection Failed:", err.message);
   console.log("Continuing without crashing...");
   return;
